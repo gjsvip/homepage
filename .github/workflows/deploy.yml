@@ -1,0 +1,33 @@
+name: Deploy Homepage to Cloudflare Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: 部署官网到 Cloudflare Pages（345 账号）
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy . --project-name=gjsvip-homepage --branch=main
+
+      - name: Summary
+        run: |
+          {
+            echo "### 官网已部署 :earth_asia:"
+            echo ""
+            echo "- 自定义域名：https://www.520691.xyz"
+            echo "- Pages 预览：https://gjsvip-homepage.pages.dev"
+          } >> $GITHUB_STEP_SUMMARY

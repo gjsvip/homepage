@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>gjsvip · 小开发者的渡劫之路 — 渡劫code 作者</title>
+<meta name="description" content="gjsvip，一名痴迷边缘计算与 Web 全栈的小开发者。代表作渡劫code：打开网页就能写代码的云端 IDE。这里有我的项目、博客与思考。">
+<meta name="keywords" content="gjsvip,渡劫code,dujiecode,独立开发者,Cloudflare Workers,云端IDE,520691.xyz">
+<meta name="author" content="gjsvip">
+<link rel="canonical" href="https://www.520691.xyz/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="gjsvip · 小开发者的渡劫之路">
+<meta property="og:description" content="代表作渡劫code：打开网页就能写代码的云端 IDE。Cloudflare 边缘全栈部署。">
+<meta property="og:url" content="https://www.520691.xyz/">
+<meta property="og:site_name" content="gjsvip">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "gjsvip",
+  "url": "https://www.520691.xyz/",
+  "sameAs": [
+    "https://github.com/gjsvip",
+    "https://gitee.com/dujie_nb_admin",
+    "https://blog.520691.xyz/"
+  ],
+  "jobTitle": "独立开发者",
+  "knowsAbout": ["Cloudflare Workers", "Web 全栈", "边缘计算", "TypeScript"]
+}
+</script>
+<style>
+:root {
+  --bg: #0b0e14;
+  --bg-soft: #11151f;
+  --panel: #151a26;
+  --border: #232a3a;
+  --text: #d8e0f0;
+  --dim: #8a94ad;
+  --accent: #4dd0e1;
+  --accent-2: #7c9eff;
+  --gold: #ffd479;
+  --mono: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg); color: var(--text); font-family: var(--sans);
+  line-height: 1.75; min-height: 100vh;
+  background-image:
+    radial-gradient(ellipse 70% 45% at 50% -8%, rgba(77, 208, 225, 0.10), transparent),
+    radial-gradient(ellipse 50% 35% at 85% 40%, rgba(124, 158, 255, 0.06), transparent);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ── 顶栏 ── */
+.site-header {
+  position: sticky; top: 0; z-index: 50;
+  backdrop-filter: blur(12px); background: rgba(11, 14, 20, 0.82);
+  border-bottom: 1px solid var(--border);
+}
+.site-header .inner {
+  max-width: 1080px; margin: 0 auto; padding: 14px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--text); font-family: var(--mono); font-size: 15px; }
+.brand:hover { text-decoration: none; }
+.brand .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 12px var(--accent); }
+.nav { display: flex; gap: 22px; font-size: 14px; }
+.nav a { color: var(--dim); }
+.nav a:hover { color: var(--text); text-decoration: none; }
+.nav a.cta { color: var(--accent); border: 1px solid rgba(77,208,225,.4); padding: 4px 14px; border-radius: 999px; }
+.nav a.cta:hover { background: rgba(77,208,225,.12); }
+
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+section { padding: 64px 0; }
+.sec-title { font-size: 13px; font-family: var(--mono); color: var(--accent); letter-spacing: 2px; margin-bottom: 10px; }
+.sec-title::before { content: "// "; color: var(--dim); }
+.sec-sub { font-size: 26px; font-weight: 700; margin-bottom: 28px; }
+
+/* ── Hero ── */
+.hero { padding: 76px 0 60px; display: grid; grid-template-columns: 1.15fr .85fr; gap: 48px; align-items: center; }
+.hero .hello { font-family: var(--mono); color: var(--accent); font-size: 14px; margin-bottom: 18px; }
+.hero .hello::before { content: "$ "; color: var(--dim); }
+.hero h1 { font-size: 42px; line-height: 1.25; margin-bottom: 18px; }
+.hero h1 em { font-style: normal; background: linear-gradient(120deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hero p.lead { color: var(--dim); font-size: 16px; max-width: 520px; margin-bottom: 30px; }
+.hero .actions { display: flex; flex-wrap: wrap; gap: 14px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 11px 22px; border-radius: 10px; font-size: 15px; font-weight: 600; transition: all .15s; }
+.btn:hover { text-decoration: none; transform: translateY(-1px); }
+.btn-primary { background: linear-gradient(120deg, var(--accent), #3bb8c9); color: #062227; }
+.btn-primary:hover { box-shadow: 0 6px 24px rgba(77,208,225,.35); }
+.btn-outline { border: 1px solid var(--border); color: var(--text); background: var(--panel); }
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Hero 终端卡片 */
+.term-card { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,.45); }
+.term-bar { display: flex; align-items: center; gap: 8px; padding: 11px 14px; background: var(--bg-soft); border-bottom: 1px solid var(--border); }
+.term-bar i { width: 11px; height: 11px; border-radius: 50%; }
+.term-bar i:nth-child(1) { background: #ff5f57; }
+.term-bar i:nth-child(2) { background: #febc2e; }
+.term-bar i:nth-child(3) { background: #28c840; }
+.term-bar span { margin-left: 8px; font-family: var(--mono); font-size: 12px; color: var(--dim); }
+.term-body { padding: 20px; font-family: var(--mono); font-size: 13.5px; line-height: 2; }
+.term-body .p { color: var(--accent); }
+.term-body .c { color: var(--text); }
+.term-body .k { color: var(--accent-2); }
+.term-body .s { color: var(--gold); }
+.term-body .d { color: var(--dim); }
+.cursor { display: inline-block; width: 8px; height: 15px; background: var(--accent); vertical-align: -2px; animation: blink 1.1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ── 关于 ── */
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.about-card { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 24px; }
+.about-card h3 { font-size: 16px; margin-bottom: 12px; color: var(--accent); font-family: var(--mono); }
+.about-card p { font-size: 14.5px; color: var(--dim); }
+.about-card p + p { margin-top: 10px; }
+.tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.tags span { font-family: var(--mono); font-size: 12px; color: var(--accent-2); border: 1px solid rgba(124,158,255,.3); background: rgba(124,158,255,.08); padding: 3px 10px; border-radius: 6px; }
+
+/* ── 渡劫code 展示 ── */
+.showcase { background: var(--bg-soft); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.feat { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 22px; transition: border-color .15s, transform .15s; }
+.feat:hover { border-color: var(--accent); transform: translateY(-2px); }
+.feat .icon { font-size: 22px; margin-bottom: 12px; }
+.feat h4 { font-size: 15.5px; margin-bottom: 8px; }
+.feat p { font-size: 13.5px; color: var(--dim); }
+.stat-row { display: flex; gap: 36px; margin: 30px 0 26px; flex-wrap: wrap; }
+.stat b { display: block; font-size: 26px; font-family: var(--mono); color: var(--accent); }
+.stat span { font-size: 13px; color: var(--dim); }
+
+/* ── 项目 ── */
+.proj-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.proj { display: block; background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 24px; transition: border-color .15s, transform .15s; }
+.proj:hover { border-color: var(--accent); transform: translateY(-2px); text-decoration: none; }
+.proj .lang { font-family: var(--mono); font-size: 12px; color: var(--gold); }
+.proj h4 { font-size: 17px; margin: 8px 0 8px; color: var(--text); }
+.proj p { font-size: 13.5px; color: var(--dim); }
+.proj .go { font-size: 13px; margin-top: 12px; display: inline-block; color: var(--accent); }
+
+/* ── 页脚友链 ── */
+.site-footer { border-top: 1px solid var(--border); background: var(--bg-soft); padding: 44px 20px 30px; }
+.foot-inner { max-width: 1080px; margin: 0 auto; }
+.foot-cols { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 32px; margin-bottom: 30px; }
+.foot-cols h5 { font-size: 13px; font-family: var(--mono); color: var(--dim); letter-spacing: 1px; margin-bottom: 14px; }
+.foot-cols .fl { display: flex; flex-direction: column; gap: 9px; font-size: 14px; }
+.foot-cols .fl a { color: var(--text); display: inline-flex; align-items: center; gap: 8px; }
+.foot-cols .fl a small { color: var(--dim); font-family: var(--mono); font-size: 12px; }
+.foot-cols .fl a:hover { color: var(--accent); text-decoration: none; }
+.foot-cols .fl a .bullet { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex: none; }
+.foot-bottom { border-top: 1px solid var(--border); padding-top: 22px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; font-size: 13px; color: var(--dim); }
+.foot-bottom .mono { font-family: var(--mono); }
+
+@media (max-width: 860px) {
+  .hero { grid-template-columns: 1fr; padding-top: 48px; }
+  .hero h1 { font-size: 32px; }
+  .about-grid, .proj-grid, .foot-cols { grid-template-columns: 1fr; }
+  .feat-grid { grid-template-columns: 1fr; }
+  .nav { display: none; }
+  section { padding: 48px 0; }
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="#top"><span class="dot"></span>gjsvip.dev</a>
+    <nav class="nav">
+      <a href="#about">关于</a>
+      <a href="#dujiecode">渡劫code</a>
+      <a href="#projects">项目</a>
+      <a href="https://blog.520691.xyz/">博客</a>
+      <a class="cta" href="https://dujie_cone.520691.xyz/">进入渡劫code</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap" id="top">
+
+  <!-- ═══ Hero ═══ -->
+  <section class="hero">
+    <div>
+      <div class="hello">whoami --verbose</div>
+      <h1>你好，我是 gjsvip<br>一名<em>小开发者</em>，正在渡劫</h1>
+      <p class="lead">痴迷边缘计算与 Web 全栈。相信「打开网页就能用」是最好的产品形态，于是把编辑器、Shell 和 AI 一起搬上了 Cloudflare 边缘网络——这就是渡劫code。</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="https://dujie_cone.520691.xyz/">进入渡劫code →</a>
+        <a class="btn btn-outline" href="https://blog.520691.xyz/">阅读博客</a>
+      </div>
+    </div>
+    <div class="term-card">
+      <div class="term-bar"><i></i><i></i><i></i><span>gjsvip@edge: ~</span></div>
+      <div class="term-body">
+        <div><span class="p">gjsvip@edge</span>:<span class="k">~</span>$ cat profile.json</div>
+        <div>{</div>
+        <div>&nbsp;&nbsp;<span class="k">"name"</span>: <span class="s">"gjsvip"</span>,</div>
+        <div>&nbsp;&nbsp;<span class="k">"role"</span>: <span class="s">"独立开发者"</span>,</div>
+        <div>&nbsp;&nbsp;<span class="k">"stack"</span>: [<span class="s">"TypeScript"</span>, <span class="s">"Cloudflare Workers"</span>, <span class="s">"React"</span>],</div>
+        <div>&nbsp;&nbsp;<span class="k">"belief"</span>: <span class="s">"打开网页就能用"</span>,</div>
+        <div>&nbsp;&nbsp;<span class="k">"status"</span>: <span class="s">"渡劫中…"</span></div>
+        <div>}</div>
+        <div><span class="p">gjsvip@edge</span>:<span class="k">~</span>$ <span class="cursor"></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 关于 ═══ -->
+  <section id="about">
+    <div class="sec-title">ABOUT</div>
+    <div class="sec-sub">关于我</div>
+    <div class="about-grid">
+      <div class="about-card">
+        <h3>$ ls ~/life</h3>
+        <p>一名奔走在互联网上的小开发者，日常与 TypeScript、Cloudflare 和无数个终端窗口为伴。喜欢把复杂的部署链路压进一条 <code>git push</code>，也喜欢在深夜里打磨一个按钮的圆角。</p>
+        <p>相信小而美的力量：一个人、几台边缘节点、一个域名，也能撑起完整的产品。渡劫code 就是这种信念的产物。</p>
+        <div class="tags">
+          <span>TypeScript</span><span>Cloudflare Workers</span><span>React</span><span>D1 / KV / R2</span><span>Vite</span><span>GitHub Actions</span><span>边缘计算</span>
+        </div>
+      </div>
+      <div class="about-card">
+        <h3>$ cat philosophy.md</h3>
+        <p>「渡劫」——修炼度过天劫，方能更上一层。开发亦如此：每一次上线都是一次渡劫，坑都要一个一个踩过去。</p>
+        <p>这个站点是我的数字客厅：<a href="https://dujie_cone.520691.xyz/">渡劫code</a> 是我的作品，<a href="https://blog.520691.xyz/">博客</a> 是我的开发手记。欢迎来逛，也欢迎来撩。</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ═══ 渡劫code 展示 ═══ -->
+<section class="showcase" id="dujiecode">
+  <div class="wrap">
+    <div class="sec-title">FLAGSHIP PROJECT</div>
+    <div class="sec-sub">渡劫code · 打开网页就能写代码的云端 IDE</div>
+    <div class="stat-row">
+      <div class="stat"><b>0</b><span>安装步骤，打开网页即用</span></div>
+      <div class="stat"><b>3</b><span>端同步：GitHub + Gitee + Cloudflare</span></div>
+      <div class="stat"><b>200+</b><span>边缘节点全球分发</span></div>
+      <div class="stat"><b>64</b><span>项单元测试守护质量</span></div>
+    </div>
+    <div class="feat-grid">
+      <div class="feat"><div class="icon">💬</div><h4>AI 对话式编程</h4><p>自然语言描述需求，SSE 流式生成代码，Agent 工具循环自动读写文件、执行命令。</p></div>
+      <div class="feat"><div class="icon">📝</div><h4>Monaco 编辑器</h4><p>VS Code 同款内核：语法高亮、多标签页、虚拟文件系统，浏览器里也是熟悉的手感。</p></div>
+      <div class="feat"><div class="icon">🖥️</div><h4>虚拟 Shell</h4><p>内置 ls / cat / echo / cd 等命令模拟，即时反馈，学习命令行零成本。</p></div>
+      <div class="feat"><div class="icon">⚡</div><h4>远程执行后端</h4><p>注册后端节点，WebSocket 通道把任务分发到任意机器，真正跑起来的代码。</p></div>
+      <div class="feat"><div class="icon">🔐</div><h4>多用户隔离</h4><p>账号体系 + 令牌鉴权，数据按账号隔离，D1 + KV + R2 全边缘存储。</p></div>
+      <div class="feat"><div class="icon">🌏</div><h4>国内外可达</h4><p>GitHub Pages 主域 + Gitee 国内镜像 + Cloudflare 边缘，三端自动同步部署。</p></div>
+    </div>
+    <div style="margin-top:30px; display:flex; gap:14px; flex-wrap:wrap;">
+      <a class="btn btn-primary" href="https://dujie_cone.520691.xyz/">立即体验 →</a>
+      <a class="btn btn-outline" href="https://github.com/gjsvip/dujiecode">查看源码</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 项目 ═══ -->
+<main class="wrap">
+  <section id="projects">
+    <div class="sec-title">PROJECTS</div>
+    <div class="sec-sub">我的项目</div>
+    <div class="proj-grid">
+      <a class="proj" href="https://dujie_cone.520691.xyz/">
+        <span class="lang">TypeScript · Cloudflare Workers</span>
+        <h4>🥷 渡劫code</h4>
+        <p>Web 版 AI 编程工作台：浏览器 IDE + Agent 工具循环 + 远程执行代理。代表作，持续迭代中。</p>
+        <span class="go">dujie_cone.520691.xyz →</span>
+      </a>
+      <a class="proj" href="https://blog.520691.xyz/">
+        <span class="lang">HTML · 静态站</span>
+        <h4>📝 个人博客</h4>
+        <p>渡劫code 开发手记、三端同步架构实录、踩坑合集。深色 IDE 风格，纯静态零依赖。</p>
+        <span class="go">blog.520691.xyz →</span>
+      </a>
+      <a class="proj" href="https://github.com/gjsvip/dujiecode">
+        <span class="lang">开源 · GitHub</span>
+        <h4>📦 dujiecode 源码</h4>
+        <p>完全开源：Worker + React 前端 + CI/CD 工作流全量公开，欢迎 Star 与 Issue。</p>
+        <span class="go">github.com/gjsvip/dujiecode →</span>
+      </a>
+      <a class="proj" href="https://github.com/gjsvip?tab=repositories">
+        <span class="lang">GitHub · 7 repos</span>
+        <h4>🧰 更多探索</h4>
+        <p>cloudflare_temp_email、BPB-Worker-Panel、socks5-for-serv00 等边缘与运维实验。</p>
+        <span class="go">github.com/gjsvip →</span>
+      </a>
+    </div>
+  </section>
+</main>
+
+<!-- ═══ 页脚友链 ═══ -->
+<footer class="site-footer">
+  <div class="foot-inner">
+    <div class="foot-cols">
+      <div>
+        <h5>GJSVIP.DEV</h5>
+        <p style="font-size:14px;color:var(--dim);max-width:300px;">小开发者的数字客厅。渡劫code 作者，边缘计算爱好者。欢迎交换友链。</p>
+      </div>
+      <div>
+        <h5>友链 · FRIENDS</h5>
+        <div class="fl">
+          <a href="https://blog.520691.xyz/"><span class="bullet"></span>渡劫手记博客 <small>blog.520691.xyz</small></a>
+          <a href="https://dujie_cone.520691.xyz/"><span class="bullet"></span>渡劫code 官网 <small>dujie_cone.520691.xyz</small></a>
+          <a href="https://gjsvip.github.io/"><span class="bullet"></span>GitHub Pages 镜像 <small>gjsvip.github.io</small></a>
+        </div>
+      </div>
+      <div>
+        <h5>找到我 · FIND ME</h5>
+        <div class="fl">
+          <a href="https://github.com/gjsvip"><span class="bullet"></span>GitHub <small>@gjsvip</small></a>
+          <a href="https://gitee.com/dujie_nb_admin"><span class="bullet"></span>Gitee <small>@dujie_nb_admin</small></a>
+          <a href="https://gitee.com/dujie_nb_admin/dujiecode"><span class="bullet"></span>Gitee 镜像仓库 <small>dujiecode</small></a>
+        </div>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2024-2026 gjsvip · 渡劫途中，皆成文章</span>
+      <span class="mono">Deployed on Cloudflare Pages · 520691.xyz</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
