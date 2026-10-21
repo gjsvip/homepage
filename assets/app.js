@@ -283,6 +283,66 @@
     });
   }
 
+  /* ---------------- 7.5 移动端导航折叠 ----------------
+     ≤720px 顶栏导航收进抽屉；点击链接 / 点击外部 / ESC 均关闭。 */
+  var navToggle = doc.getElementById('navToggle');
+  var siteNav = doc.getElementById('siteNav');
+
+  function setNavOpen(open) {
+    if (!navToggle || !siteNav) {
+      return;
+    }
+    siteNav.classList.toggle('open', open);
+    navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    navToggle.setAttribute('aria-label', open ? '收起导航菜单' : '展开导航菜单');
+  }
+
+  if (navToggle && siteNav) {
+    navToggle.addEventListener('click', function (event) {
+      event.stopPropagation();
+      setNavOpen(!siteNav.classList.contains('open'));
+    });
+
+    /* 点击导航内任意链接后收起（锚点跳转） */
+    Array.prototype.forEach.call(siteNav.querySelectorAll('a'), function (link) {
+      link.addEventListener('click', function () {
+        setNavOpen(false);
+      });
+    });
+
+    /* 点击抽屉外部关闭 */
+    doc.addEventListener('click', function (event) {
+      if (!siteNav.classList.contains('open')) {
+        return;
+      }
+      if (!siteNav.contains(event.target) && !navToggle.contains(event.target)) {
+        setNavOpen(false);
+      }
+    });
+
+    /* ESC 关闭 */
+    doc.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') {
+        setNavOpen(false);
+      }
+    });
+
+    /* 视口放大回桌面宽度时复位，避免残留 .open */
+    if (typeof window.matchMedia === 'function') {
+      var desktopMq = window.matchMedia('(min-width: 721px)');
+      var onDesktop = function (e) {
+        if (e.matches) {
+          setNavOpen(false);
+        }
+      };
+      if (typeof desktopMq.addEventListener === 'function') {
+        desktopMq.addEventListener('change', onDesktop);
+      } else if (typeof desktopMq.addListener === 'function') {
+        desktopMq.addListener(onDesktop);
+      }
+    }
+  }
+
   /* ---------------- 8. 顶栏滚动态 ---------------- */
   var header = doc.querySelector('.site-header');
   if (header) {
